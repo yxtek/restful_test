@@ -32,6 +32,10 @@
     <uses-permission android:name="android.permission.SEND_SMS" />
     <uses-permission android:name="android.permission.RECEIVE_SMS" />
     <uses-permission android:name="android.permission.NFC" />
+    
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE"></uses-permission>  
+	<uses-permission android:name="android.permission.CHANGE_WIFI_STATE"></uses-permission>  
+	<uses-permission android:name="android.permission.WAKE_LOCK"></uses-permission>
 
 	<!--     使用SAFApp需要添加的权限 -->
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
@@ -123,7 +127,8 @@
 		
 	    <activity
                 android:label="@string/saf_demo_app_name_5"
-                android:name="com.example.saf.RestClientDemo">
+                android:name="com.example.saf.RestClientDemo"
+                android:configChanges="orientation|screenSize">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
 		        <category android:name="android.intent.category.SAMPLE_CODE" />
