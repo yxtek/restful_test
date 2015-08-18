@@ -2,6 +2,7 @@ package com.example.saf;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
@@ -9,6 +10,7 @@ import android.app.ListActivity;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.ArrayAdapter;
@@ -73,42 +75,9 @@ public class RestClientDemo extends Activity {
 		
 		url = etUrl.getText().toString();
 		
-		new Thread(new Runnable() {
-			
-			@Override
-			public void run() {
-				RestClient.get(url, new HttpResponseHandler() {
 
-					public void onSuccess(String content) {
-						// contentΪhttp����ɹ��󷵻ص�response
-						L.d("onSuccess[" + content + "]");
-//						List<Contributor> list = JSON.parseArray(content, Contributor.class);
-//						
-//						for (Contributor contributor : list) {
-////							listData.add(contributor.toString());
-//							contributor.save();
-//						}
-//						handle.sendEmptyMessage(1);
-						Message msg = Message.obtain();
-						msg.what = 1;
-						msg.obj = content;
-						
-						handle.sendMessage(msg);
-						
-					}
-
-					@Override
-					public void onFail(RestException exception) {
-						Message msg = Message.obtain();
-						msg.what = 1;
-						msg.obj = exception.getMessage();
-						
-						handle.sendMessage(msg);
-					}
-				});
-			}
-		}).start();
-
+		sendRest();
+		
 		findViewById(R.id.btn_send).setOnClickListener(new OnClickListener() {
 			
 			@Override
@@ -179,6 +148,17 @@ public class RestClientDemo extends Activity {
 						msg.what = 1;
 						msg.obj = exception.getMessage();
 						
+						handle.sendMessage(msg);
+					}
+
+					@Override
+					public void onSuccess(String arg0,
+							Map<String, List<String>> arg1) {
+						Message msg = Message.obtain();
+						msg.what = 1;
+						msg.obj = arg0;
+						
+						Log.i("", arg1.toString());
 						handle.sendMessage(msg);
 					}
 				});

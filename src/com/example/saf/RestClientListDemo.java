@@ -2,6 +2,7 @@ package com.example.saf;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import android.annotation.SuppressLint;
 import android.app.ListActivity;
@@ -74,6 +75,13 @@ public class RestClientListDemo extends ListActivity {
 					@Override
 					public void onFail(RestException exception) {
 
+					}
+
+					@Override
+					public void onSuccess(String arg0,
+							Map<String, List<String>> arg1) {
+						// TODO Auto-generated method stub
+						
 					}
 				});
 			}
