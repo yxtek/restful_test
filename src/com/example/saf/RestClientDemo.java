@@ -181,6 +181,8 @@ public class RestClientDemo extends Activity {
 //			}
 //		}).start();
 		
+		ThreadPoolManager.getInstance().shutdownNow();
+		
 		ThreadPoolManager.getInstance().addTask(new Runnable() {
 			
 			@Override

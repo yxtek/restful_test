@@ -30,14 +30,15 @@ public class ThreadPoolManager {
 		return manager;
 	}
     
-    Future<T> future;
+    Future<String> future;
     public void addTask(Runnable runnable){
 //    	commonThreadPool.execute(runnable);
-    	future = commonThreadPool.submit(runnable);
+    	future = commonThreadPool.submit(runnable, "test");
 	}
     
     public void shutdownNow(){
-    	commonThreadPool.shutdownNow();
+//    	commonThreadPool.shutdownNow();
+    	future.cancel(true);
     }
     
     private void test() {
