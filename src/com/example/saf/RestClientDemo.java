@@ -1,11 +1,13 @@
 package com.example.saf;
 
+import java.io.File;
 import java.util.List;
 import java.util.Map;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
@@ -170,7 +172,8 @@ public class RestClientDemo extends Activity {
 						msg.what = 1;
 						msg.obj = arg0;
 						
-						Log.i("", arg1.toString());
+						Log.i(TAG, "arg0:"+arg0);
+						Log.i(TAG, arg1.toString());
 						handle.sendMessage(msg);
 					}
 				});
@@ -180,6 +183,9 @@ public class RestClientDemo extends Activity {
 	
 	private void getDefaultUrl() {
 		url = String.format("http://%s/", Util.getIp(this));
+//		url = "http://app_api.fuhui.com";
 	}
-
+	
+	
+	
 }

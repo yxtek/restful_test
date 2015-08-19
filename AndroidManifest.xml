@@ -134,6 +134,16 @@
 		        <category android:name="android.intent.category.SAMPLE_CODE" />
             </intent-filter>
 		</activity>
+		
+	    <activity
+                android:label="@string/saf_demo_app_name_6"
+                android:name="com.example.saf.ImageLoaderActivity"
+                android:configChanges="orientation|screenSize">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN"/>
+		        <category android:name="android.intent.category.SAMPLE_CODE" />
+            </intent-filter>
+		</activity>
 
 	    	    
     </application>
