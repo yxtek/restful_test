@@ -1,5 +1,7 @@
 package com.example.saf.common;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.Future;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -7,6 +9,8 @@ import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
+
+import android.util.Log;
 
 public class ThreadPoolManager {
 	private static final ThreadPoolManager manager= new ThreadPoolManager();
@@ -22,7 +26,11 @@ public class ThreadPoolManager {
         }
 	};
 	private final BlockingQueue<Runnable> sPoolWorkQueue = new LinkedBlockingQueue<Runnable>(20);
-    private ThreadPoolExecutor commonThreadPool = new ThreadPoolExecutor(0, Runtime.getRuntime().availableProcessors(), 1,
+	
+	private int CORE_POOL_SIZE = Runtime.getRuntime().availableProcessors() * 2;
+	private int MAXIMUM_POOL_SIZE = CORE_POOL_SIZE * 2;
+	
+    private ThreadPoolExecutor commonThreadPool = new ThreadPoolExecutor(CORE_POOL_SIZE, MAXIMUM_POOL_SIZE, 1,
             TimeUnit.SECONDS, sPoolWorkQueue, defaultThreadFactory,
             new ThreadPoolExecutor.DiscardOldestPolicy());
     
@@ -32,16 +40,34 @@ public class ThreadPoolManager {
     
     Future<String> future;
     public void addTask(Runnable runnable){
-//    	commonThreadPool.execute(runnable);
-    	future = commonThreadPool.submit(runnable, "test");
+    	commonThreadPool.execute(runnable);
 	}
     
-    public void shutdownNow(){
+    
+    public void addHttpTask(MyHttpTask task) {
+		tasks.add(task);
+		future = commonThreadPool.submit(task, "common");
+	}
+    
+    List<MyHttpTask> tasks =new ArrayList<MyHttpTask>();
+    
+    public void stopAllTasks(){
 //    	commonThreadPool.shutdownNow();
-    	future.cancel(true);
+    	synchronized(MyHttpTask.class){
+	    	if(null!=future){
+	    		future.cancel(true);
+	    	}
+	    	
+	    	if(!tasks.isEmpty()){
+	    		for(MyHttpTask r:tasks){
+	    			r.cancel();
+	    			Log.i("", "cancel myhttptask");
+	    			commonThreadPool.remove(r);
+	    		}
+	    	}
+	    	tasks.clear();
+    	}
     }
     
-    private void test() {
-		
-	}
+    
 }

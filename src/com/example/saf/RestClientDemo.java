@@ -21,8 +21,11 @@ import cn.salesuite.saf.http.rest.RestClient;
 import cn.salesuite.saf.http.rest.RestException;
 import cn.salesuite.saf.inject.Injector;
 import cn.salesuite.saf.inject.annotation.InjectView;
+
+import com.alibaba.fastjson.JSONObject;
 import com.example.android.apis.R;
 import com.example.android.apis.Util;
+import com.example.saf.common.MyHttpTask;
 import com.example.saf.common.ThreadPoolManager;
 import com.example.saf.domain.Contributor;
 
@@ -181,39 +184,30 @@ public class RestClientDemo extends Activity {
 //			}
 //		}).start();
 		
-		ThreadPoolManager.getInstance().shutdownNow();
-		
-		ThreadPoolManager.getInstance().addTask(new Runnable() {
+		ThreadPoolManager.getInstance().stopAllTasks();
+		ThreadPoolManager.getInstance().addHttpTask(new MyHttpTask(new HttpResponseHandler() {
 			
 			@Override
-			public void run() {
-				RestClient.get(url, new HttpResponseHandler(){
-
-					@Override
-					public void onFail(RestException arg0) {
-						Message msg = Message.obtain();
-						msg.what = 1;
-						msg.obj = arg0.getMessage();
-						
-						handle.sendMessage(msg);
-					}
-
-					@Override
-					public void onSuccess(String arg0,
-							Map<String, List<String>> arg1) {
-						Message msg = Message.obtain();
-						msg.what = 1;
-						msg.obj = arg0;
-						
-						Log.i(TAG, "arg0:"+arg0);
-						Log.i(TAG, arg1.toString());
-						handle.sendMessage(msg);
-						
-					}
-					
-				});
+			public void onSuccess(String arg0, Map<String, List<String>> arg1) {
+				Message msg = Message.obtain();
+				msg.what = 1;
+				msg.obj = arg0;
+				
+				Log.i(TAG, "arg0:"+arg0);
+				Log.i(TAG, arg1.toString());
+				handle.sendMessage(msg);
 			}
-		});
+			
+			@Override
+			public void onFail(RestException arg0) {
+				Message msg = Message.obtain();
+				msg.what = 1;
+				msg.obj = arg0.getMessage();
+				
+				handle.sendMessage(msg);
+			}
+		}, url));
+		
 	}
 	
 	private void getDefaultUrl() {
