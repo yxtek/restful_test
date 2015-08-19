@@ -23,6 +23,7 @@ import cn.salesuite.saf.inject.Injector;
 import cn.salesuite.saf.inject.annotation.InjectView;
 import com.example.android.apis.R;
 import com.example.android.apis.Util;
+import com.example.saf.common.ThreadPoolManager;
 import com.example.saf.domain.Contributor;
 
 /**
@@ -132,35 +133,65 @@ public class RestClientDemo extends Activity {
 	}
 	
 	private void sendRest() {
-		new Thread(new Runnable() {
+//		new Thread(new Runnable() {
+//			
+//			@Override
+//			public void run() {
+//				RestClient.get(url, new HttpResponseHandler() {
+//
+////					public void onSuccess(String content) {
+////						// contentΪhttp����ɹ��󷵻ص�response
+////						L.d("onSuccess[" + content + "]");
+//////						List<Contributor> list = JSON.parseArray(content, Contributor.class);
+//////						
+//////						for (Contributor contributor : list) {
+////////							listData.add(contributor.toString());
+//////							contributor.save();
+//////						}
+//////						handle.sendEmptyMessage(1);
+////						Message msg = Message.obtain();
+////						msg.what = 1;
+////						msg.obj = content;
+////						
+////						handle.sendMessage(msg);
+////						
+////					}
+//
+//					@Override
+//					public void onFail(RestException exception) {
+//						Message msg = Message.obtain();
+//						msg.what = 1;
+//						msg.obj = exception.getMessage();
+//						
+//						handle.sendMessage(msg);
+//					}
+//
+//					@Override
+//					public void onSuccess(String arg0,
+//							Map<String, List<String>> arg1) {
+//						Message msg = Message.obtain();
+//						msg.what = 1;
+//						msg.obj = arg0;
+//						
+//						Log.i(TAG, "arg0:"+arg0);
+//						Log.i(TAG, arg1.toString());
+//						handle.sendMessage(msg);
+//					}
+//				});
+//			}
+//		}).start();
+		
+		ThreadPoolManager.getInstance().addTask(new Runnable() {
 			
 			@Override
 			public void run() {
-				RestClient.get(url, new HttpResponseHandler() {
-
-//					public void onSuccess(String content) {
-//						// contentΪhttp����ɹ��󷵻ص�response
-//						L.d("onSuccess[" + content + "]");
-////						List<Contributor> list = JSON.parseArray(content, Contributor.class);
-////						
-////						for (Contributor contributor : list) {
-//////							listData.add(contributor.toString());
-////							contributor.save();
-////						}
-////						handle.sendEmptyMessage(1);
-//						Message msg = Message.obtain();
-//						msg.what = 1;
-//						msg.obj = content;
-//						
-//						handle.sendMessage(msg);
-//						
-//					}
+				RestClient.get(url, new HttpResponseHandler(){
 
 					@Override
-					public void onFail(RestException exception) {
+					public void onFail(RestException arg0) {
 						Message msg = Message.obtain();
 						msg.what = 1;
-						msg.obj = exception.getMessage();
+						msg.obj = arg0.getMessage();
 						
 						handle.sendMessage(msg);
 					}
@@ -175,10 +206,12 @@ public class RestClientDemo extends Activity {
 						Log.i(TAG, "arg0:"+arg0);
 						Log.i(TAG, arg1.toString());
 						handle.sendMessage(msg);
+						
 					}
+					
 				});
 			}
-		}).start();
+		});
 	}
 	
 	private void getDefaultUrl() {
