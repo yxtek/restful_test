@@ -1,13 +1,11 @@
 package com.example.saf;
 
-import java.io.File;
 import java.util.List;
 import java.util.Map;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.os.Bundle;
-import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
@@ -16,8 +14,6 @@ import android.view.View.OnClickListener;
 import android.widget.EditText;
 import android.widget.TextView;
 import cn.salesuite.saf.eventbus.EventBus;
-import cn.salesuite.saf.http.rest.HttpResponseHandler;
-import cn.salesuite.saf.http.rest.RestClient;
 import cn.salesuite.saf.http.rest.RestException;
 import cn.salesuite.saf.inject.Injector;
 import cn.salesuite.saf.inject.annotation.InjectView;
@@ -25,8 +21,9 @@ import cn.salesuite.saf.inject.annotation.InjectView;
 import com.alibaba.fastjson.JSONObject;
 import com.example.android.apis.R;
 import com.example.android.apis.Util;
-import com.example.saf.common.MyHttpTask;
-import com.example.saf.common.ThreadPoolManager;
+import com.example.saf.core.BaseActivity;
+import com.example.saf.core.HttpTask;
+import com.example.saf.core.ThreadPoolManager;
 import com.example.saf.domain.Contributor;
 
 /**
@@ -34,7 +31,7 @@ import com.example.saf.domain.Contributor;
  * @author ERIK
  *
  */
-public class RestClientDemo extends Activity {
+public class RestClientDemo extends BaseActivity {
 
 	// log tag
 	private static final String TAG = "RestClientDemo";
@@ -42,7 +39,7 @@ public class RestClientDemo extends Activity {
 	@InjectView(id=R.id.tv_content)
 	private TextView tvContent;
 	
-//	@InjectView(id=R.id.editText1)
+	@InjectView(id=R.id.editText1)
 	private EditText etUrl;
 	
 	private String url;
@@ -64,17 +61,6 @@ public class RestClientDemo extends Activity {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
-		eventBus = EventBusManager.getInstance();
-		eventBus.register(this);
-		new Contributor().delete();
-		
-		setContentView(R.layout.activity_restdemo);
-		Injector.injectInto(this);
-		
-//		tvContent = (TextView)findViewById(R.id.tv_content);
-		etUrl = (EditText)findViewById(R.id.editText1);
-		
-		
 		if(null!=savedInstanceState){
 			url = savedInstanceState.getString("url");
 		}
@@ -83,7 +69,6 @@ public class RestClientDemo extends Activity {
 		}
 		
 		etUrl.setText(url);
-		Log.i(TAG, "url:"+url);
 
 		sendRest();
 		
@@ -124,7 +109,6 @@ public class RestClientDemo extends Activity {
 	@Override
 	protected void onDestroy() {
 		super.onDestroy();
-		eventBus.unregister(this);
 	}
 	
 	@Override
@@ -185,10 +169,14 @@ public class RestClientDemo extends Activity {
 //		}).start();
 		
 		ThreadPoolManager.getInstance().stopAllTasks();
-		ThreadPoolManager.getInstance().addHttpTask(new MyHttpTask(new HttpResponseHandler() {
+		
+		JSONObject jsonObject = new JSONObject();
+		jsonObject.put("id", 87);
+		
+		ThreadPoolManager.getInstance().addHttpTask(new HttpTask(url,jsonObject) {
 			
 			@Override
-			public void onSuccess(String arg0, Map<String, List<String>> arg1) {
+			protected void onResponse(String arg0, Map<String, List<String>> arg1) {
 				Message msg = Message.obtain();
 				msg.what = 1;
 				msg.obj = arg0;
@@ -199,20 +187,26 @@ public class RestClientDemo extends Activity {
 			}
 			
 			@Override
-			public void onFail(RestException arg0) {
+			protected void onException(RestException arg0) {
 				Message msg = Message.obtain();
 				msg.what = 1;
 				msg.obj = arg0.getMessage();
 				
+				Log.i(TAG, "arg0:"+arg0);
 				handle.sendMessage(msg);
+				
 			}
-		}, url));
-		
+		});
 	}
 	
 	private void getDefaultUrl() {
 		url = String.format("http://%s/", Util.getIp(this));
 //		url = "http://app_api.fuhui.com";
+	}
+
+	@Override
+	protected int getLayoutId() {
+		return R.layout.activity_restdemo;
 	}
 	
 	

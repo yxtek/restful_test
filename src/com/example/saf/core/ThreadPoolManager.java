@@ -1,4 +1,20 @@
-package com.example.saf.common;
+/** 
+ * File Name:ThreadPoolManager.java
+ * 
+ * Version:1.0
+ *
+ * Date:2015-8-20
+ *
+ * Description:
+ *
+ * Author:erik
+ * Email:erik7@126.com
+ * Copyright (c) 2015 yxtek Information Co.,Ltd.
+ * All Rights Reserved. 
+ */ 
+
+
+package com.example.saf.core;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -9,6 +25,7 @@ import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
+
 
 import android.util.Log;
 
@@ -44,22 +61,22 @@ public class ThreadPoolManager {
 	}
     
     
-    public void addHttpTask(MyHttpTask task) {
+    public void addHttpTask(HttpTask task) {
 		tasks.add(task);
 		future = commonThreadPool.submit(task, "common");
 	}
     
-    List<MyHttpTask> tasks =new ArrayList<MyHttpTask>();
+    List<HttpTask> tasks =new ArrayList<HttpTask>();
     
     public void stopAllTasks(){
 //    	commonThreadPool.shutdownNow();
-    	synchronized(MyHttpTask.class){
+    	synchronized(HttpTask.class){
 	    	if(null!=future){
 	    		future.cancel(true);
 	    	}
 	    	
 	    	if(!tasks.isEmpty()){
-	    		for(MyHttpTask r:tasks){
+	    		for(HttpTask r:tasks){
 	    			r.cancel();
 	    			Log.i("", "cancel myhttptask");
 	    			commonThreadPool.remove(r);
