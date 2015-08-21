@@ -17,7 +17,7 @@ package com.example.saf.core.http;
 
 public interface HttpConstant {
 	
-	public static final String SERVER_IP = "http://app_api.fuhui.com";
+	public static final String SERVER = "http://app_api.fuhui.com";
 	
 	// 根据手机号码请求验证码
 	public static final String API_VERIFY_CODE = "v1/verifyCode";

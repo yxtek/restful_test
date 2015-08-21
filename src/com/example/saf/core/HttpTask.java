@@ -18,10 +18,13 @@ package com.example.saf.core;
 import java.util.List;
 import java.util.Map;
 
+import android.text.TextUtils;
+
 import com.alibaba.fastjson.JSONObject;
 
 import cn.salesuite.saf.http.rest.HttpResponseHandler;
 import cn.salesuite.saf.http.rest.RestClient;
+import cn.salesuite.saf.http.rest.RestConstant;
 import cn.salesuite.saf.http.rest.RestException;
 
 public abstract class HttpTask implements Runnable {
@@ -32,6 +35,12 @@ public abstract class HttpTask implements Runnable {
 	
 	// 任务是否被取消
 	private boolean canceled;
+	
+	/**
+	 * PUT,GET,POST,DELETE
+	 * 默认为PUT
+	 */
+	private String methodType = RestConstant.METHOD_POST;
 	
 	public HttpTask(String url){
 		this.url = url;
@@ -44,7 +53,28 @@ public abstract class HttpTask implements Runnable {
 	
 	@Override
 	public void run() {
-		RestClient.post(url, requetEntity, httpResponseHandler);
+		RestClient.setRetryNum(1);
+			
+		try {
+			if(methodType.equals(RestConstant.METHOD_POST)){
+				RestClient.post(url, requetEntity, httpResponseHandler);
+			}
+			else if(methodType.equals(RestConstant.METHOD_PUT)){
+				
+			}
+			else if(methodType.equals(RestConstant.METHOD_GET)){
+				
+			}
+			else if(methodType.equals(RestConstant.METHOD_DELETE)){
+				
+			}
+			else{
+			}
+			
+		} catch (RestException e) {
+			onException(e);
+		}
+
 	}
 	
 	public void cancel() {

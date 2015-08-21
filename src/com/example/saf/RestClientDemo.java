@@ -4,7 +4,6 @@ import java.util.List;
 import java.util.Map;
 
 import android.annotation.SuppressLint;
-import android.app.Activity;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -15,7 +14,6 @@ import android.widget.EditText;
 import android.widget.TextView;
 import cn.salesuite.saf.eventbus.EventBus;
 import cn.salesuite.saf.http.rest.RestException;
-import cn.salesuite.saf.inject.Injector;
 import cn.salesuite.saf.inject.annotation.InjectView;
 
 import com.alibaba.fastjson.JSONObject;
@@ -24,7 +22,6 @@ import com.example.android.apis.Util;
 import com.example.saf.core.BaseActivity;
 import com.example.saf.core.HttpTask;
 import com.example.saf.core.ThreadPoolManager;
-import com.example.saf.domain.Contributor;
 
 /**
  * 

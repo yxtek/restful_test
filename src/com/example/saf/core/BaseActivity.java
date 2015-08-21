@@ -32,7 +32,7 @@ public abstract class BaseActivity extends Activity {
 		
 		
 		/**
-		 * 由子类实现
+		 * 由子类实现,返回layout id
 		 * @return
 		 */
 		protected abstract int getLayoutId();
