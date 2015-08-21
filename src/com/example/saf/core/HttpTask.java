@@ -18,29 +18,22 @@ package com.example.saf.core;
 import java.util.List;
 import java.util.Map;
 
-import android.text.TextUtils;
-
-import com.alibaba.fastjson.JSONObject;
-
 import cn.salesuite.saf.http.rest.HttpResponseHandler;
 import cn.salesuite.saf.http.rest.RestClient;
 import cn.salesuite.saf.http.rest.RestConstant;
 import cn.salesuite.saf.http.rest.RestException;
 
+import com.alibaba.fastjson.JSONObject;
+import com.example.saf.core.http.RequestEntity;
+
 public abstract class HttpTask implements Runnable {
 	
 	private String url;
 	
-	private JSONObject requetEntity;
-	
 	// 任务是否被取消
 	private boolean canceled;
 	
-	/**
-	 * PUT,GET,POST,DELETE
-	 * 默认为PUT
-	 */
-	private String methodType = RestConstant.METHOD_POST;
+	private RequestEntity requestEntity;
 	
 	public HttpTask(String url){
 		this.url = url;
@@ -48,16 +41,24 @@ public abstract class HttpTask implements Runnable {
 	
 	public HttpTask(String url,JSONObject requestObj){
 		this.url = url;
-		this.requetEntity = requestObj;
+	}
+	
+	public HttpTask(RequestEntity entity) {
+		this.requestEntity = entity;
 	}
 	
 	@Override
 	public void run() {
 		RestClient.setRetryNum(1);
 			
+		if(requestEntity==null)
+			return;
+		
+		String methodType = requestEntity.getRestMethod();
+		
 		try {
 			if(methodType.equals(RestConstant.METHOD_POST)){
-				RestClient.post(url, requetEntity, httpResponseHandler);
+				RestClient.post(url, requestEntity.getEntity(), httpResponseHandler);
 			}
 			else if(methodType.equals(RestConstant.METHOD_PUT)){
 				

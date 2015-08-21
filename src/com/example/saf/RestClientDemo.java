@@ -13,6 +13,7 @@ import android.view.View.OnClickListener;
 import android.widget.EditText;
 import android.widget.TextView;
 import cn.salesuite.saf.eventbus.EventBus;
+import cn.salesuite.saf.http.rest.RestConstant;
 import cn.salesuite.saf.http.rest.RestException;
 import cn.salesuite.saf.inject.annotation.InjectView;
 
@@ -22,6 +23,7 @@ import com.example.android.apis.Util;
 import com.example.saf.core.BaseActivity;
 import com.example.saf.core.HttpTask;
 import com.example.saf.core.ThreadPoolManager;
+import com.example.saf.core.http.RequestEntity;
 
 /**
  * 
@@ -117,60 +119,12 @@ public class RestClientDemo extends BaseActivity {
 	}
 	
 	private void sendRest() {
-//		new Thread(new Runnable() {
-//			
-//			@Override
-//			public void run() {
-//				RestClient.get(url, new HttpResponseHandler() {
-//
-////					public void onSuccess(String content) {
-////						// contentΪhttp����ɹ��󷵻ص�response
-////						L.d("onSuccess[" + content + "]");
-//////						List<Contributor> list = JSON.parseArray(content, Contributor.class);
-//////						
-//////						for (Contributor contributor : list) {
-////////							listData.add(contributor.toString());
-//////							contributor.save();
-//////						}
-//////						handle.sendEmptyMessage(1);
-////						Message msg = Message.obtain();
-////						msg.what = 1;
-////						msg.obj = content;
-////						
-////						handle.sendMessage(msg);
-////						
-////					}
-//
-//					@Override
-//					public void onFail(RestException exception) {
-//						Message msg = Message.obtain();
-//						msg.what = 1;
-//						msg.obj = exception.getMessage();
-//						
-//						handle.sendMessage(msg);
-//					}
-//
-//					@Override
-//					public void onSuccess(String arg0,
-//							Map<String, List<String>> arg1) {
-//						Message msg = Message.obtain();
-//						msg.what = 1;
-//						msg.obj = arg0;
-//						
-//						Log.i(TAG, "arg0:"+arg0);
-//						Log.i(TAG, arg1.toString());
-//						handle.sendMessage(msg);
-//					}
-//				});
-//			}
-//		}).start();
 		
 		ThreadPoolManager.getInstance().stopAllTasks();
 		
-		JSONObject jsonObject = new JSONObject();
-		jsonObject.put("id", 87);
+		RequestEntity entity = getTestRequestEntity();
 		
-		ThreadPoolManager.getInstance().addHttpTask(new HttpTask(url,jsonObject) {
+		ThreadPoolManager.getInstance().addHttpTask(new HttpTask(entity) {
 			
 			@Override
 			protected void onResponse(String arg0, Map<String, List<String>> arg1) {
@@ -196,9 +150,20 @@ public class RestClientDemo extends BaseActivity {
 		});
 	}
 	
-	private void getDefaultUrl() {
+	private String getDefaultUrl() {
 		url = String.format("http://%s/", Util.getIp(this));
+		return url;
 //		url = "http://app_api.fuhui.com";
+	}
+	
+	private RequestEntity getTestRequestEntity() {
+		String url = getDefaultUrl();
+		String method = RestConstant.METHOD_POST;
+		
+		JSONObject jsonObject = new JSONObject();
+		jsonObject.put("id", 87);
+		
+		return new RequestEntity(url, method, jsonObject);
 	}
 
 	@Override

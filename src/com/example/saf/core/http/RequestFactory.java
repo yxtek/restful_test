@@ -15,23 +15,27 @@
 
 package com.example.saf.core.http;
 
+import cn.salesuite.saf.http.rest.RestConstant;
+
 import com.alibaba.fastjson.JSONObject;
 
 public class RequestFactory {
 
-	public static JSONObject verifyCode(String phone) {
+	public static RequestEntity verifyCode(String phone) {
 		JSONObject object = new JSONObject();
 		object.put("phone", phone);
 		
-		return object;
+		return new RequestEntity(HttpConstant.SERVER+HttpConstant.API_VERIFY_CODE, RestConstant.METHOD_POST,
+				object);
 	}
 	
-	public static JSONObject login(String phone,String password) {
+	public static RequestEntity login(String phone,String password) {
 		JSONObject object = new JSONObject();
 		object.put("phone", phone);
 		object.put("password", password);
 		
-		return object;
+		return new RequestEntity(HttpConstant.SERVER+HttpConstant.API_LOGIN, RestConstant.METHOD_POST,
+				object);
 	}
 }
 
