@@ -50,7 +50,7 @@
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-feature android:name="android.hardware.camera" />
     <uses-feature android:name="android.hardware.camera.autofocus" android:required="false" />
-
+    
     <application android:name="com.example.saf.ApiDemosApp"
             android:label="@string/activity_sample_code"
             android:icon="@drawable/app_sample_code"
@@ -128,7 +128,7 @@
 	    <activity
                 android:label="@string/saf_demo_app_name_5"
                 android:name="com.example.saf.RestClientDemo"
-                android:configChanges="orientation|screenSize">
+                android:configChanges="orientation|screenSize" android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
 		        <category android:name="android.intent.category.SAMPLE_CODE" />
@@ -145,11 +145,12 @@
             </intent-filter>
 		</activity>
 
+	    <uses-library android:name="android.test.runner" />
 	    	    
     </application>
 
-    <instrumentation android:name=".app.LocalSampleInstrumentation"
-        android:targetPackage="com.example.android.apis"
-        android:label="Local Sample" />
+    <instrumentation android:name="android.test.InstrumentationTestRunner"
+        android:targetPackage="com.example.android.apis" >
+    </instrumentation>
 
 </manifest>

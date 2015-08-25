@@ -1,5 +1,8 @@
 package com.example.saf;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.util.List;
 import java.util.Map;
 
@@ -13,13 +16,14 @@ import android.view.View.OnClickListener;
 import android.widget.EditText;
 import android.widget.TextView;
 import cn.salesuite.saf.eventbus.EventBus;
+import cn.salesuite.saf.http.rest.RestClient;
 import cn.salesuite.saf.http.rest.RestConstant;
 import cn.salesuite.saf.http.rest.RestException;
 import cn.salesuite.saf.inject.annotation.InjectView;
 
 import com.alibaba.fastjson.JSONObject;
 import com.example.android.apis.R;
-import com.example.android.apis.Util;
+import com.example.saf.common.Util;
 import com.example.saf.core.BaseActivity;
 import com.example.saf.core.HttpTask;
 import com.example.saf.core.ThreadPoolManager;
@@ -69,13 +73,12 @@ public class RestClientDemo extends BaseActivity {
 		
 		etUrl.setText(url);
 
-		sendRest();
-		
 		findViewById(R.id.btn_send).setOnClickListener(new OnClickListener() {
 			
 			@Override
 			public void onClick(View v) {
 				url = etUrl.getText().toString();
+				getTestRequestEntity();
 				sendRest();
 			}
 		});
@@ -148,20 +151,38 @@ public class RestClientDemo extends BaseActivity {
 				
 			}
 		});
+//		new Thread(new Runnable() {
+//			
+//			@Override
+//			public void run() {
+//				RestClient client = new RestClient(url, RestConstant.METHOD_POST);
+//				String path = Util.getTCardPath()+"/1.txt";
+//				FileInputStream fileInputStream;
+//				try {
+//					fileInputStream = new FileInputStream(new File(path));
+//					client.send(fileInputStream);
+//					RestClient.post(url);
+//				} catch (FileNotFoundException e) {
+//					// TODO Auto-generated catch block
+//					e.printStackTrace();
+//				}
+//				
+//			}
+//		}).start();
 	}
 	
 	private String getDefaultUrl() {
-		url = String.format("http://%s/", Util.getIp(this));
+//		url = String.format("http://%s/", Util.getIp(this));
+		url = "http://app_api.fuhui.com/v1/login";
 		return url;
-//		url = "http://app_api.fuhui.com";
 	}
 	
 	private RequestEntity getTestRequestEntity() {
-		String url = getDefaultUrl();
 		String method = RestConstant.METHOD_POST;
 		
 		JSONObject jsonObject = new JSONObject();
-		jsonObject.put("id", 87);
+		jsonObject.put("phone", "15800571861");
+		jsonObject.put("password", "111111");
 		
 		return new RequestEntity(url, method, jsonObject);
 	}

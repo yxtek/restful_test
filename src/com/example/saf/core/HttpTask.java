@@ -23,25 +23,14 @@ import cn.salesuite.saf.http.rest.RestClient;
 import cn.salesuite.saf.http.rest.RestConstant;
 import cn.salesuite.saf.http.rest.RestException;
 
-import com.alibaba.fastjson.JSONObject;
 import com.example.saf.core.http.RequestEntity;
 
 public abstract class HttpTask implements Runnable {
-	
-	private String url;
 	
 	// 任务是否被取消
 	private boolean canceled;
 	
 	private RequestEntity requestEntity;
-	
-	public HttpTask(String url){
-		this.url = url;
-	}
-	
-	public HttpTask(String url,JSONObject requestObj){
-		this.url = url;
-	}
 	
 	public HttpTask(RequestEntity entity) {
 		this.requestEntity = entity;
@@ -55,6 +44,7 @@ public abstract class HttpTask implements Runnable {
 			return;
 		
 		String methodType = requestEntity.getRestMethod();
+		String url = requestEntity.getUrl();
 		
 		try {
 			if(methodType.equals(RestConstant.METHOD_POST)){
