@@ -78,7 +78,7 @@ public class RestClientListDemo extends ListActivity {
 					}
 
 					@Override
-					public void onSuccess(String arg0,
+					public void onSuccess(int code,String arg0,
 							Map<String, List<String>> arg1) {
 						// TODO Auto-generated method stub
 						

@@ -34,7 +34,7 @@ public class RequestFactory {
 		object.put("phone", phone);
 		object.put("password", password);
 		
-		return new RequestEntity(HttpConstant.SERVER+HttpConstant.API_LOGIN, RestConstant.METHOD_POST,
+		return new RequestEntity(UrlFactory.getUrl(HttpConstant.API_LOGIN), RestConstant.METHOD_POST,
 				object);
 	}
 }

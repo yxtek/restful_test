@@ -20,11 +20,21 @@ import android.app.ListActivity;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
+import android.util.Log;
 import android.view.View;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
 
+import java.io.BufferedReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.text.Collator;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -50,6 +60,9 @@ public class ApiDemos extends ListActivity {
                 android.R.layout.simple_list_item_1, new String[] { "title" },
                 new int[] { android.R.id.text1 }));
         getListView().setTextFilterEnabled(true);
+        
+//        new MyTask().execute();
+        
     }
 
     protected List<Map<String, Object>> getData(String prefix) {
@@ -146,4 +159,59 @@ public class ApiDemos extends ListActivity {
         Intent intent = (Intent) map.get("intent");
         startActivity(intent);
     }
+    
+    private void testHttp() {
+
+		 HttpURLConnection connection=null;
+        
+        try {
+            URL url=new URL("http://app_api.fuhui.com/v1/login");
+            connection =(HttpURLConnection) url.openConnection();
+            connection.setRequestMethod("GET");
+            connection.setConnectTimeout(8000);
+            connection.setReadTimeout(8000);
+            
+//            int responseCode = connection.getResponseCode();
+//            Log.i("", "response code:"+ responseCode);
+            connection.setRequestProperty("Content-Type","application/json");
+            connection.setRequestProperty("Accept","application/json");
+            
+            InputStream in=connection.getInputStream();
+            //下面对获取到的输入流进行读取
+            BufferedReader reader=new BufferedReader(new InputStreamReader(in));
+            StringBuilder response=new StringBuilder();
+            String line;
+            while((line=reader.readLine())!=null){
+                response.append(line);
+            }
+//            Message message=new Message();
+//            message.what=SHOW_RESPONSE;
+//            //将服务器返回的结果存放到Message中
+//            message.obj=response.toString();
+//            handler.sendMessage(message);
+             Log.i("", "response from server:"+response.toString());
+             
+        } catch (MalformedURLException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }catch(Exception e){
+            e.printStackTrace();
+        }finally{
+            if(connection!=null){
+                connection.disconnect();
+            }
+        }
+    
+	}
+    
+    private class MyTask extends AsyncTask<Void, Void, Void>{
+
+		@Override
+		protected Void doInBackground(Void... params) {
+			testHttp();
+			return null;
+		}
+    	
+    }
+    
 }

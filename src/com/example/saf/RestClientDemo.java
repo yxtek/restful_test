@@ -3,10 +3,13 @@ package com.example.saf;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.util.List;
 import java.util.Map;
 
 import android.annotation.SuppressLint;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -23,6 +26,8 @@ import cn.salesuite.saf.inject.annotation.InjectView;
 
 import com.alibaba.fastjson.JSONObject;
 import com.example.android.apis.R;
+import com.example.saf.common.AppSetting;
+import com.example.saf.common.MD5Util;
 import com.example.saf.common.Util;
 import com.example.saf.core.BaseActivity;
 import com.example.saf.core.HttpTask;
@@ -77,6 +82,8 @@ public class RestClientDemo extends BaseActivity {
 			
 			@Override
 			public void onClick(View v) {
+//				new getIpTask().execute();
+				
 				url = etUrl.getText().toString();
 				getTestRequestEntity();
 				sendRest();
@@ -126,17 +133,27 @@ public class RestClientDemo extends BaseActivity {
 		ThreadPoolManager.getInstance().stopAllTasks();
 		
 		RequestEntity entity = getTestRequestEntity();
+		entity.setToken(AppSetting.getToken(this));
 		
 		ThreadPoolManager.getInstance().addHttpTask(new HttpTask(entity) {
 			
 			@Override
-			protected void onResponse(String arg0, Map<String, List<String>> arg1) {
+			protected void onResponse(int code,String arg0, Map<String, List<String>> arg1) {
 				Message msg = Message.obtain();
 				msg.what = 1;
 				msg.obj = arg0;
 				
-				Log.i(TAG, "arg0:"+arg0);
-				Log.i(TAG, arg1.toString());
+				Log.i(TAG, "code:"+code+" arg0:"+arg0);
+				
+				if(null!=arg1){
+					Log.i(TAG, arg1.toString());
+				
+					List<String> strings = arg1.get("Token");
+					if(null!=strings&&!strings.isEmpty()){
+						AppSetting.setToken(getApplicationContext(), strings.get(0));
+					}
+				}
+				
 				handle.sendMessage(msg);
 			}
 			
@@ -163,7 +180,6 @@ public class RestClientDemo extends BaseActivity {
 //					client.send(fileInputStream);
 //					RestClient.post(url);
 //				} catch (FileNotFoundException e) {
-//					// TODO Auto-generated catch block
 //					e.printStackTrace();
 //				}
 //				
@@ -173,16 +189,25 @@ public class RestClientDemo extends BaseActivity {
 	
 	private String getDefaultUrl() {
 //		url = String.format("http://%s/", Util.getIp(this));
-		url = "http://app_api.fuhui.com/v1/login";
+		url = "http://10.10.3.52/v1/address/18";
+//		url = "http://10.10.2.53/v1/login";
 		return url;
 	}
 	
 	private RequestEntity getTestRequestEntity() {
-		String method = RestConstant.METHOD_POST;
+//		String method = RestConstant.METHOD_POST;
+//		String method = RestConstant.METHOD_GET;
+//		String method = RestConstant.METHOD_DELETE;
+		String method = RestConstant.METHOD_PUT;
 		
 		JSONObject jsonObject = new JSONObject();
-		jsonObject.put("phone", "15800571861");
-		jsonObject.put("password", "111111");
+//		jsonObject.put("phone", "15800571861");
+//		jsonObject.put("password", MD5Util.MD5("111111"));
+//		jsonObject.put("contact", "1388888");
+//		jsonObject.put("content", "反馈的内容");
+		jsonObject.put("phone", "187");
+		jsonObject.put("username", "中文");
+		jsonObject.put("address", "南京");
 		
 		return new RequestEntity(url, method, jsonObject);
 	}
@@ -192,6 +217,27 @@ public class RestClientDemo extends BaseActivity {
 		return R.layout.activity_restdemo;
 	}
 	
+	
+	private class getIpTask extends AsyncTask<Void, Void, Void>{
+
+		@Override
+		protected Void doInBackground(Void... params) {
+			getIpTest();
+			return null;
+		}
+		
+	}
+	
+	private void getIpTest() {
+		InetAddress address;
+		try {
+			address = InetAddress.getByName("app_api.fuhui.com");
+			String ip = address.getHostAddress();
+			Log.i(TAG, "ip:"+ip);
+		} catch (UnknownHostException e) {
+			e.printStackTrace();
+		}
+	}
 	
 	
 }

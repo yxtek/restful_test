@@ -24,6 +24,16 @@ public interface HttpConstant {
 	
 	// 登陆接口
 	public static final String API_LOGIN = "v1/login";
+	
+	public static final String API_ADDRESS = "v1/address";
+	
+	public static final String API_EMPLOYER = "v1/employer";
+	
+	public static final String API_FEEDBACK = "v1/feedback";
+	
+	public static final String AUTH = "Authorization";
+	
+	public static final String BEARER = "Bearer ";
 }
 
 

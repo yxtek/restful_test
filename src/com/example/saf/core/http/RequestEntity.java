@@ -26,6 +26,8 @@ public class RequestEntity {
 	private JSONObject entity;
 	private Map<String, String> params;
 	
+	private String token;
+	
 	public RequestEntity(String url,String method) {
 		this.url = url;
 		this.restMethod = method;
@@ -67,6 +69,15 @@ public class RequestEntity {
 	public void setParams(Map<String, String> params) {
 		this.params = params;
 	}
+
+	public String getToken() {
+		return token;
+	}
+
+	public void setToken(String token) {
+		this.token = token;
+	}
+	
 	
 	
 }
